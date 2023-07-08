@@ -8,11 +8,33 @@ uint8_t block = false;
 
 unsigned long next_blink = 0;
 unsigned long next_effekt = 0;
+TaskHandle_t myTaskHandle = NULL;
+TaskHandle_t myTaskHandle2 = NULL;
 
 void LEDtask(void *arg){
   while (1){
     if(changed) {
-      for(int a = 0; a < SIDELED_NUM_LEDS; a++) {
+      for(int a = 0; a < 15; a++) {
+        leds_current[a] = leds_color[a];
+        if(leds_state[a] == SIDELED_STATE_OFF) {
+          leds_current[a] = CRGB::Black;
+        }
+        if(leds_state[a] == SIDELED_STATE_FADE) {
+          leds_state[a] = SIDELED_STATE_FADE_RG;
+          leds_current[a].blue = 0x00;
+          leds_current[a].red = 0xFF;
+          leds_current[a].green = 0x00;
+        }
+      }
+      for(int a = 15; a < 26; a++) {
+        leds_current[a] = leds_color[a];
+        if(leds_state[a] == SIDELED_STATE_OFF) {
+          leds_current[a] = CRGB::Black;
+        }
+          leds_state[a] = SIDELED_STATE_ON;
+          leds_current[a] = CRGB::White;
+      }
+      for(int a = 26; a < 30; a++) {
         leds_current[a] = leds_color[a];
         if(leds_state[a] == SIDELED_STATE_OFF) {
           leds_current[a] = CRGB::Black;
@@ -84,7 +106,8 @@ void init_sideled() {
     // Init FastLED
     FastLED.addLeds<NEOPIXEL, SIDELED_DATA_PIN>(leds_current, SIDELED_NUM_LEDS);
     // Start background task
-    xTaskCreatePinnedToCore(LEDtask, "LEDTask", 4096, NULL, 2, NULL, 0);
+    xTaskCreate(LEDtask, "LEDTask", 4096, NULL, 10, &myTaskHandle);
+    xTaskCreatePinnedToCore(LEDtask, "LEDTask", 4096, NULL, 2, &myTaskHandle, 1);
 }
 
 void set_sideled_state(uint8_t led_start, uint8_t led_end, uint8_t state) {
