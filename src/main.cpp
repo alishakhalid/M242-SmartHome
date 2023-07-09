@@ -12,245 +12,192 @@ unsigned long next_lv_task = 0;
 
 lv_obj_t * led;
 
-lv_obj_t * red_checkbox;
-lv_obj_t * blue_checkbox;
+lv_obj_t * livingroom_checkbox;
+lv_obj_t * bedroom_checkbox;
+lv_obj_t * attic_checkbox;
 
 lv_obj_t * off_checkbox;
-lv_obj_t * on_checkbox;
+//if one color chosen new options appear: red, green, blue
+lv_obj_t * one_color_checkbox;
 lv_obj_t * blink_checkbox;
+lv_obj_t * party_checkbox;
 
-lv_obj_t * left_button;
-lv_obj_t * right_button;
+//options shown to light up room in just one of these color
+lv_obj_t * red_checkbox;
+lv_obj_t * green_checkbox;
+lv_obj_t * blue_checkbox;
 
-void event_handler_checkbox(struct _lv_obj_t * obj, lv_event_t event) {
-  if(event == LV_EVENT_VALUE_CHANGED ) {
-    if(
-      (obj == red_checkbox || obj == blue_checkbox) &&
-      (lv_checkbox_is_checked(red_checkbox) || lv_checkbox_is_checked(blue_checkbox))
-      ) {
-      lv_checkbox_set_checked(blue_checkbox, obj == blue_checkbox ? lv_checkbox_is_checked(blue_checkbox) : false);
-      lv_checkbox_set_checked(red_checkbox, obj == red_checkbox ? lv_checkbox_is_checked(red_checkbox) : false);
+
+lv_obj_t * apply_button;
+
+// void event_handler_checkbox(struct _lv_obj_t * obj, lv_event_t event) {
+//   if(event == LV_EVENT_VALUE_CHANGED ) {
+//     if(
+//       (obj == red_checkbox || obj == blue_checkbox) &&
+//       (lv_checkbox_is_checked(red_checkbox) || lv_checkbox_is_checked(blue_checkbox))
+//       ) {
+//       lv_checkbox_set_checked(blue_checkbox, obj == blue_checkbox ? lv_checkbox_is_checked(blue_checkbox) : false);
+//       lv_checkbox_set_checked(red_checkbox, obj == red_checkbox ? lv_checkbox_is_checked(red_checkbox) : false);
+//     }
+//     if(
+//       (obj == off_checkbox || obj == on_checkbox || obj == blink_checkbox) &&
+//       (lv_checkbox_is_checked(off_checkbox) || lv_checkbox_is_checked(on_checkbox) || lv_checkbox_is_checked(blink_checkbox))
+//       ) {
+//       lv_checkbox_set_checked(off_checkbox, obj == off_checkbox ? lv_checkbox_is_checked(off_checkbox) : false);
+//       lv_checkbox_set_checked(on_checkbox, obj == on_checkbox ? lv_checkbox_is_checked(on_checkbox) : false);
+//       lv_checkbox_set_checked(blink_checkbox, obj == blink_checkbox ? lv_checkbox_is_checked(blink_checkbox) : false);
+//     }
+//     bool is_ready = (
+//         ((
+//         (lv_checkbox_is_checked(red_checkbox) && !lv_checkbox_is_checked(blue_checkbox)) ||
+//         (!lv_checkbox_is_checked(red_checkbox) && lv_checkbox_is_checked(blue_checkbox))
+//       ) &&
+//       (
+//         (!lv_checkbox_is_checked(off_checkbox) && lv_checkbox_is_checked(on_checkbox) && !lv_checkbox_is_checked(blink_checkbox)) ||
+//         (!lv_checkbox_is_checked(off_checkbox) && !lv_checkbox_is_checked(on_checkbox) && lv_checkbox_is_checked(blink_checkbox))
+//       )) || (
+//         (lv_checkbox_is_checked(off_checkbox) && !lv_checkbox_is_checked(on_checkbox) && !lv_checkbox_is_checked(blink_checkbox))
+//       ));
+//     lv_obj_set_click(apply_button, is_ready);
+//     lv_obj_set_click(right_button, is_ready);
+//     lv_obj_set_state(apply_button, is_ready ? LV_STATE_DEFAULT : LV_STATE_DISABLED);
+//     lv_obj_set_state(right_button, is_ready ? LV_STATE_DEFAULT : LV_STATE_DISABLED);
+//   } 
+// }
+
+void event_handler_checkbox(struct _lv_obj_t* obj, lv_event_t event)
+{
+    if (event == LV_EVENT_VALUE_CHANGED) {
+        if ((obj == livingroom_checkbox || obj == bedroom_checkbox || obj == attic_checkbox) &&
+            (lv_checkbox_is_checked(livingroom_checkbox) || lv_checkbox_is_checked(bedroom_checkbox) || lv_checkbox_is_checked(attic_checkbox))) {
+            lv_checkbox_set_checked(livingroom_checkbox, obj == livingroom_checkbox ? lv_checkbox_is_checked(livingroom_checkbox) : false);
+            lv_checkbox_set_checked(attic_checkbox, obj == attic_checkbox ? lv_checkbox_is_checked(attic_checkbox) : false);
+        }
+        if ((obj == off_checkbox || obj == one_color_checkbox || obj == blink_checkbox || obj == party_checkbox) &&
+            (lv_checkbox_is_checked(off_checkbox) || lv_checkbox_is_checked(one_color_checkbox) ||
+             lv_checkbox_is_checked(blink_checkbox) || lv_checkbox_is_checked(party_checkbox))) {
+            lv_checkbox_set_checked(off_checkbox, obj == off_checkbox ? lv_checkbox_is_checked(off_checkbox) : false);
+            lv_checkbox_set_checked(one_color_checkbox, obj == one_color_checkbox ? lv_checkbox_is_checked(one_color_checkbox) : false);
+            lv_checkbox_set_checked(blink_checkbox, obj == blink_checkbox ? lv_checkbox_is_checked(blink_checkbox) : false);
+            lv_checkbox_set_checked(party_checkbox, obj == party_checkbox ? lv_checkbox_is_checked(party_checkbox) : false);
+        }
+        bool is_ready = (((lv_checkbox_is_checked(red_checkbox) && !lv_checkbox_is_checked(blue_checkbox)) ||
+                          (!lv_checkbox_is_checked(red_checkbox) && lv_checkbox_is_checked(blue_checkbox))) &&
+                         ((!lv_checkbox_is_checked(off_checkbox) && !lv_checkbox_is_checked(one_color_checkbox) &&
+                           lv_checkbox_is_checked(one_color_checkbox) && !lv_checkbox_is_checked(blink_checkbox)) ||
+                          (!lv_checkbox_is_checked(off_checkbox) && !lv_checkbox_is_checked(one_color_checkbox) &&
+                           !lv_checkbox_is_checked(one_color_checkbox) && lv_checkbox_is_checked(blink_checkbox))) ||
+                         (lv_checkbox_is_checked(off_checkbox) && !lv_checkbox_is_checked(one_color_checkbox) &&
+                          !lv_checkbox_is_checked(one_color_checkbox) && !lv_checkbox_is_checked(blink_checkbox)));
+        lv_obj_set_click(apply_button, is_ready);
+        lv_obj_set_state(apply_button, is_ready ? LV_STATE_DEFAULT : LV_STATE_DISABLED);
     }
-    if(
-      (obj == off_checkbox || obj == on_checkbox || obj == blink_checkbox) &&
-      (lv_checkbox_is_checked(off_checkbox) || lv_checkbox_is_checked(on_checkbox) || lv_checkbox_is_checked(blink_checkbox))
-      ) {
-      lv_checkbox_set_checked(off_checkbox, obj == off_checkbox ? lv_checkbox_is_checked(off_checkbox) : false);
-      lv_checkbox_set_checked(on_checkbox, obj == on_checkbox ? lv_checkbox_is_checked(on_checkbox) : false);
-      lv_checkbox_set_checked(blink_checkbox, obj == blink_checkbox ? lv_checkbox_is_checked(blink_checkbox) : false);
-    }
-    bool is_ready = (
-        ((
-        (lv_checkbox_is_checked(red_checkbox) && !lv_checkbox_is_checked(blue_checkbox)) ||
-        (!lv_checkbox_is_checked(red_checkbox) && lv_checkbox_is_checked(blue_checkbox))
-      ) &&
-      (
-        (!lv_checkbox_is_checked(off_checkbox) && lv_checkbox_is_checked(on_checkbox) && !lv_checkbox_is_checked(blink_checkbox)) ||
-        (!lv_checkbox_is_checked(off_checkbox) && !lv_checkbox_is_checked(on_checkbox) && lv_checkbox_is_checked(blink_checkbox))
-      )) || (
-        (lv_checkbox_is_checked(off_checkbox) && !lv_checkbox_is_checked(on_checkbox) && !lv_checkbox_is_checked(blink_checkbox))
-      ));
-    lv_obj_set_click(left_button, is_ready);
-    lv_obj_set_click(right_button, is_ready);
-    lv_obj_set_state(left_button, is_ready ? LV_STATE_DEFAULT : LV_STATE_DISABLED);
-    lv_obj_set_state(right_button, is_ready ? LV_STATE_DEFAULT : LV_STATE_DISABLED);
-  } 
 }
 
+
+// void event_handler_button(struct _lv_obj_t * obj, lv_event_t event) {
+//   if(event == LV_EVENT_PRESSED) {
+//     uint8_t led_livingroom = (obj == apply_button ? 0 : 15);
+//     uint8_t led_bedroom = (obj == apply_button ? 15 : 26);
+//     uint8_t led_lattic = (obj == apply_button ? 26 : 30);
+//     CRGB color = lv_checkbox_is_checked(blue_checkbox) ? CRGB::Blue ? lv_checkbox_is_checked(red_checkbox) : CRGB::Red : CRGB::Green;
+//     uint8_t state = SIDELED_STATE_OFF;
+//     if(lv_checkbox_is_checked(one_color_checkbox)) state = SIDELED_STATE_ON;
+//     if(lv_checkbox_is_checked(blink_checkbox)) state = SIDELED_STATE_BLINK;
+//     if(lv_checkbox_is_checked(party_checkbox)) state = SIDELED_STATE_FADE;
+//     if(lv_checkbox_is_checked(off_checkbox)) state = SIDELED_STATE_OFF;
+
+//     set_sideled_color(led_livingroom,led_lattic, color);
+//     set_sideled_state(led_livingroom,led_lattic, state);
+//   }
+// }
+
 void event_handler_button(struct _lv_obj_t * obj, lv_event_t event) {
-  if(event == LV_EVENT_PRESSED) {
-    uint8_t led_start = (obj == right_button ? 0 : 5);
-    uint8_t led_end = (obj == right_button ? 5 : 10);
-    CRGB color = lv_checkbox_is_checked(blue_checkbox) ? CRGB::Blue : CRGB::Red;
+  if (event == LV_EVENT_PRESSED) {
+    uint8_t led_livingroom = (obj == apply_button ? 0 : 15);
+    uint8_t led_bedroom = (obj == apply_button ? 15 : 26);
+    uint8_t led_lattic = (obj == apply_button ? 26 : 30);
+    CRGB color = lv_checkbox_is_checked(blue_checkbox) ? CRGB::Blue :
+                 (lv_checkbox_is_checked(red_checkbox) ? CRGB::Red : CRGB::Green);
     uint8_t state = SIDELED_STATE_OFF;
-    if(lv_checkbox_is_checked(on_checkbox)) state = SIDELED_STATE_ON;
-    if(lv_checkbox_is_checked(blink_checkbox)) state = SIDELED_STATE_BLINK;
-    set_sideled_color(led_start,led_end, color);
-    set_sideled_state(led_start,led_end, state);
+    if (lv_checkbox_is_checked(one_color_checkbox)) state = SIDELED_STATE_ON;
+    if (lv_checkbox_is_checked(blink_checkbox)) state = SIDELED_STATE_BLINK;
+    if (lv_checkbox_is_checked(party_checkbox)) state = SIDELED_STATE_FADE;
+    if (lv_checkbox_is_checked(off_checkbox)) state = SIDELED_STATE_OFF;
+
+    set_sideled_color(led_livingroom, led_bedroom,led_lattic, color);
+    set_sideled_state(led_livingroom, led_bedroom,led_lattic, state);
   }
 }
 
-// void init_gui_elements() {
-//   add_label("1. Select Color", 10, 10);
-//   red_checkbox = add_checkbox("Red", 10, 50, event_handler_checkbox);
-//   blue_checkbox = add_checkbox("Blue", 120, 40, event_handler_checkbox);
-//   add_label("2. Select Mode", 10, 70);
-//   off_checkbox = add_checkbox("Off", 10, 100, event_handler_checkbox);
-//   on_checkbox = add_checkbox("On", 120, 100, event_handler_checkbox);
-//   blink_checkbox = add_checkbox("Blink", 200, 100, event_handler_checkbox);
-//   add_label("3. Apply Color to side:", 10, 140);
-//   left_button = add_button("Apply Left", event_handler_button, 0, 170, 150, 50);
-//   right_button = add_button("Apply Right", event_handler_button, 160, 170, 150, 50);
 
-//   lv_obj_set_click(left_button, false);
-//   lv_obj_set_click(right_button, false);
-//   lv_obj_set_state(left_button, LV_STATE_DISABLED);
-//   lv_obj_set_state(right_button, LV_STATE_DISABLED);
+// void init_gui_elements() {
+//   add_label("Choose room", 13, 11);
+//   livingroom_checkbox = add_checkbox("Livingroom", 13, 31, event_handler_checkbox);
+//   bedroom_checkbox = add_checkbox("Bedroom", 156, 31, event_handler_checkbox);
+//   attic_checkbox = add_checkbox("Attic", 16, 64, event_handler_checkbox);
+
+//   add_label("2. Select Lightning Mode", 11, 100);
+//   off_checkbox = add_checkbox("Off", 12, 252, event_handler_checkbox);
+//   one_color_checkbox = add_checkbox("One Color", 12, 120, event_handler_checkbox);
+//   blink_checkbox = add_checkbox("Blink", 146, 123, event_handler_checkbox);
+//   party_checkbox = add_checkbox("Party", 229, 121, event_handler_checkbox);
+
+//   if(lv_checkbox_is_checked(one_color_checkbox)){
+//     add_label("Choose color", 10, 70);
+//     red_checkbox = add_checkbox("Red", 13, 207, event_handler_checkbox);
+//     blue_checkbox = add_checkbox("Blue", 172, 206, event_handler_checkbox);
+//     green_checkbox = add_checkbox("Green", 82, 207, event_handler_checkbox);
+//   }
+
+//   //add_label("3. Apply Settings:", 10, 140);
+//   apply_button = add_button("Apply", event_handler_button, 244, 197, 70, 30);
+//   lv_obj_set_click(apply_button, false);
+//   lv_obj_set_state(apply_button, LV_STATE_DISABLED);
 // }
 
-lv_obj_t *livingroom_checkbox;
-lv_obj_t *bedroom_checkbox;
-lv_obj_t *attic_checkbox;
-lv_obj_t *green_checkbox;
+void init_gui_elements() {
+  add_label("Choose room", 13, 11);
+  livingroom_checkbox = add_checkbox("Livingroom", 13, 31, event_handler_checkbox);
+  lv_obj_set_event_cb(livingroom_checkbox, event_handler_checkbox);  // Assign event handler
 
-void set_decision(const char* room, const char* mode, const char* color)
-{
-    printf("Setting decision: Room: %s, Mode: %s", room, mode);
-    
-    if (strcmp(mode, "Color") == 0)
-    {
-        printf(", Color: %s\n", color);
-        // Code to control the LED with the specified color
-    }
-    else
-    {
-        printf("\n");
-        // Code to control the LED based on other modes (e.g., blink, party)
-    }
+  bedroom_checkbox = add_checkbox("Bedroom", 156, 31, event_handler_checkbox);
+  lv_obj_set_event_cb(bedroom_checkbox, event_handler_checkbox);  // Assign event handler
+
+  attic_checkbox = add_checkbox("Attic", 16, 64, event_handler_checkbox);
+  lv_obj_set_event_cb(attic_checkbox, event_handler_checkbox);  // Assign event handler
+
+  add_label("2. Select Lightning Mode", 11, 100);
+  off_checkbox = add_checkbox("Off", 12, 252, event_handler_checkbox);
+  lv_obj_set_event_cb(off_checkbox, event_handler_checkbox);  // Assign event handler
+
+  one_color_checkbox = add_checkbox("One Color", 12, 120, event_handler_checkbox);
+  lv_obj_set_event_cb(one_color_checkbox, event_handler_checkbox);  // Assign event handler
+
+  blink_checkbox = add_checkbox("Blink", 146, 123, event_handler_checkbox);
+  lv_obj_set_event_cb(blink_checkbox, event_handler_checkbox);  // Assign event handler
+
+  party_checkbox = add_checkbox("Party", 229, 121, event_handler_checkbox);
+  lv_obj_set_event_cb(party_checkbox, event_handler_checkbox);  // Assign event handler
+
+  if (lv_checkbox_is_checked(one_color_checkbox)) {
+    add_label("Choose color", 10, 70);
+    red_checkbox = add_checkbox("Red", 13, 207, event_handler_checkbox);
+    lv_obj_set_event_cb(red_checkbox, event_handler_checkbox);  // Assign event handler
+
+    blue_checkbox = add_checkbox("Blue", 172, 206, event_handler_checkbox);
+    lv_obj_set_event_cb(blue_checkbox, event_handler_checkbox);  // Assign event handler
+
+    green_checkbox = add_checkbox("Green", 82, 207, event_handler_checkbox);
+    lv_obj_set_event_cb(green_checkbox, event_handler_checkbox);  // Assign event handler
+  }
+
+  apply_button = add_button("Apply", event_handler_button, 244, 197, 70, 30);
+  lv_obj_set_event_cb(apply_button, event_handler_button);  // Assign event handler
+  lv_obj_set_click(apply_button, false);
+  lv_obj_set_state(apply_button, LV_STATE_DISABLED);
 }
 
-void setup_gui()
-{
-    lv_obj_t *label1 = lv_label_create(lv_scr_act(), NULL);
-    lv_label_set_text(label1, "1. Select Room");
-    lv_obj_set_pos(label1, 10, 10);
-
-    livingroom_checkbox = lv_checkbox_create(lv_scr_act(), NULL);
-    lv_checkbox_set_text(livingroom_checkbox, "Living Room");
-    lv_obj_set_pos(livingroom_checkbox, 10, 50);
-
-    bedroom_checkbox = lv_checkbox_create(lv_scr_act(), NULL);
-    lv_checkbox_set_text(bedroom_checkbox, "Bedroom");
-    lv_obj_set_pos(bedroom_checkbox, 120, 40);
-
-    attic_checkbox = lv_checkbox_create(lv_scr_act(), NULL);
-    lv_checkbox_set_text(attic_checkbox, "Attic");
-    lv_obj_set_pos(attic_checkbox, 200, 40);
-
-    lv_obj_t *label2 = lv_label_create(lv_scr_act(), NULL);
-    lv_label_set_text(label2, "2. Select Mode");
-    lv_obj_set_pos(label2, 10, 90);
-
-    blink_checkbox = lv_checkbox_create(lv_scr_act(), NULL);
-    lv_checkbox_set_text(blink_checkbox, "Blink");
-    lv_obj_set_pos(blink_checkbox, 10, 130);
-
-    party_checkbox = lv_checkbox_create(lv_scr_act(), NULL);
-    lv_checkbox_set_text(party_checkbox, "Party");
-    lv_obj_set_pos(party_checkbox, 120, 130);
-
-    color_checkbox = lv_checkbox_create(lv_scr_act(), NULL);
-    lv_checkbox_set_text(color_checkbox, "Color");
-    lv_obj_set_pos(color_checkbox, 220, 130);
-
-    red_checkbox = lv_checkbox_create(lv_scr_act(), NULL);
-    lv_checkbox_set_text(red_checkbox, "Red");
-    lv_obj_set_pos(red_checkbox, 10, 170);
-
-    green_checkbox = lv_checkbox_create(lv_scr_act(), NULL);
-    lv_checkbox_set_text(green_checkbox, "Green");
-    lv_obj_set_pos(green_checkbox, 120, 170);
-
-    blue_checkbox = lv_checkbox_create(lv_scr_act(), NULL);
-    lv_checkbox_set_text(blue_checkbox, "Blue");
-    lv_obj_set_pos(blue_checkbox, 220, 170);
-
-    lv_obj_set_hidden(red_checkbox, true);
-    lv_obj_set_hidden(green_checkbox, true);
-    lv_obj_set_hidden(blue_checkbox, true);
-
-    lv_obj_t *label3 = lv_label_create(lv_scr_act(), NULL);
-    lv_label_set_text(label3, "3. Apply Color to Side:");
-    lv_obj_set_pos(label3, 10, 210);
-
-    left_button = lv_btn_create(lv_scr_act(), NULL);
-    lv_obj_set_pos(left_button, 0, 250);
-    lv_obj_set_size(left_button, 150, 50);
-    lv_btn_set_checkable(left_button, true);
-    lv_obj_t *label_left = lv_label_create(left_button, NULL);
-    lv_label_set_text(label_left, "Apply Left");
-
-    right_button = lv_btn_create(lv_scr_act(), NULL);
-    lv_obj_set_pos(right_button, 160, 250);
-    lv_obj_set_size(right_button, 150, 50);
-    lv_btn_set_checkable(right_button, true);
-    lv_obj_t *label_right = lv_label_create(right_button, NULL);
-    lv_label_set_text(label_right, "Apply Right");
-
-    lv_obj_set_event_cb(left_button, handle_button);
-    lv_obj_set_event_cb(right_button, handle_button);
-
-    lv_obj_set_hidden(left_button, true);
-    lv_obj_set_hidden(right_button, true);
-}
-
-static lv_res_t handle_button(lv_obj_t *button, lv_event_t event)
-{
-    if (event == LV_EVENT_CLICKED)
-    {
-        if (lv_obj_get_state(left_button, LV_BTN_PART_MAIN) & LV_STATE_CHECKED)
-        {
-            // Get the selected room
-            char room[15];
-            if (lv_checkbox_is_checked(livingroom_checkbox))
-            {
-                strcpy(room, "Living Room");
-            }
-            else if (lv_checkbox_is_checked(bedroom_checkbox))
-            {
-                strcpy(room, "Bedroom");
-            }
-            else if (lv_checkbox_is_checked(attic_checkbox))
-            {
-                strcpy(room, "Attic");
-            }
-
-            // Get the selected mode
-            char mode[10];
-            if (lv_checkbox_is_checked(blink_checkbox))
-            {
-                strcpy(mode, "Blink");
-            }
-            else if (lv_checkbox_is_checked(party_checkbox))
-            {
-                strcpy(mode, "Party");
-            }
-            else if (lv_checkbox_is_checked(color_checkbox))
-            {
-                strcpy(mode, "Color");
-            }
-
-            // Get the selected color if mode is Color
-            char color[10];
-            if (strcmp(mode, "Color") == 0)
-            {
-                if (lv_checkbox_is_checked(red_checkbox))
-                {
-                    strcpy(color, "Red");
-                }
-                else if (lv_checkbox_is_checked(green_checkbox))
-                {
-                    strcpy(color, "Green");
-                }
-                else if (lv_checkbox_is_checked(blue_checkbox))
-                {
-                    strcpy(color, "Blue");
-                }
-            }
-
-            // Set the decision and light up the LED accordingly
-            if (strcmp(mode, "Color") == 0)
-            {
-                set_decision(room, mode, color);
-            }
-            else
-            {
-                set_decision(room, mode, "");
-            }
-        }
-    }
-    return LV_RES_OK;
-}
 
 // ----------------------------------------------------------------------------
 // MQTT callback

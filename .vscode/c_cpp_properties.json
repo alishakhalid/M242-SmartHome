@@ -479,7 +479,7 @@
                 ]
             },
             "defines": [
-                "PLATFORMIO=60107",
+                "PLATFORMIO=60109",
                 "ARDUINO_M5STACK_Core2",
                 "BOARD_HAS_PSRAM",
                 "BOARD_HAS_PSRAM",
@@ -500,8 +500,8 @@
                 "ARDUINO_PARTITION_default",
                 ""
             ],
-            "cStandard": "c99",
-            "cppStandard": "c++11",
+            "cStandard": "gnu99",
+            "cppStandard": "gnu++11",
             "compilerPath": "C:/Users/aalis/.platformio/packages/toolchain-xtensa-esp32/bin/xtensa-esp32-elf-gcc.exe",
             "compilerArgs": [
                 "-mfix-esp32-psram-cache-issue",

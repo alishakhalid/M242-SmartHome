@@ -110,19 +110,19 @@ void init_sideled() {
     xTaskCreatePinnedToCore(LEDtask, "LEDTask", 4096, NULL, 2, &myTaskHandle, 1);
 }
 
-void set_sideled_state(uint8_t led_start, uint8_t led_end, uint8_t state) {
+void set_sideled_state(uint8_t led_livingroom, uint8_t led_bedroom,uint8_t led_attic, uint8_t state) {
   block = true;
-  if(led_start >= SIDELED_NUM_LEDS || led_end > SIDELED_NUM_LEDS || led_start >= led_end) return;
-  for(uint8_t a = led_start; a < led_end; a++) {
+  if(led_livingroom >= SIDELED_NUM_LEDS || led_bedroom > SIDELED_NUM_LEDS || led_attic > SIDELED_NUM_LEDS || led_livingroom >= led_bedroom >= led_attic) return;
+  for(uint8_t a = led_livingroom; a < led_attic; a++) {
     leds_state[a] = state;
   }
   changed = true;
 }
 
-void set_sideled_color(uint8_t led_start, uint8_t led_end, CRGB color) {
+void set_sideled_color(uint8_t led_livingroom, uint8_t led_bedroom,uint8_t led_attic, CRGB color) {
   block = true;
-  if(led_start >= SIDELED_NUM_LEDS || led_end > SIDELED_NUM_LEDS || led_start >= led_end) return;
-  for(uint8_t a = led_start; a < led_end; a++) {
+  if(led_livingroom >= SIDELED_NUM_LEDS || led_bedroom > SIDELED_NUM_LEDS || led_attic > SIDELED_NUM_LEDS || led_livingroom >= led_bedroom >= led_attic) return;
+  for(uint8_t a = led_livingroom; a < led_attic; a++) {
     leds_color[a] = color;
   }
   changed = true;
