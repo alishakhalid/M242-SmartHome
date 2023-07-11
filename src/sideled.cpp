@@ -14,7 +14,7 @@ TaskHandle_t myTaskHandle2 = NULL;
 void LEDtask(void *arg){
   while (1){
     if(changed) {
-      for(int a = 0; a < 15; a++) {
+      for(int a = 0; a < SIDELED_NUM_LEDS; a++) {
         leds_current[a] = leds_color[a];
         if(leds_state[a] == SIDELED_STATE_OFF) {
           leds_current[a] = CRGB::Black;
@@ -26,26 +26,26 @@ void LEDtask(void *arg){
           leds_current[a].green = 0x00;
         }
       }
-      for(int a = 15; a < 26; a++) {
-        leds_current[a] = leds_color[a];
-        if(leds_state[a] == SIDELED_STATE_OFF) {
-          leds_current[a] = CRGB::Black;
-        }
-          leds_state[a] = SIDELED_STATE_ON;
-          leds_current[a] = CRGB::White;
-      }
-      for(int a = 26; a < 30; a++) {
-        leds_current[a] = leds_color[a];
-        if(leds_state[a] == SIDELED_STATE_OFF) {
-          leds_current[a] = CRGB::Black;
-        }
-        if(leds_state[a] == SIDELED_STATE_FADE) {
-          leds_state[a] = SIDELED_STATE_FADE_RG;
-          leds_current[a].blue = 0x00;
-          leds_current[a].red = 0xFF;
-          leds_current[a].green = 0x00;
-        }
-      }
+      // for(int a = 15; a < 26; a++) {
+      //   leds_current[a] = leds_color[a];
+      //   if(leds_state[a] == SIDELED_STATE_OFF) {
+      //     leds_current[a] = CRGB::Black;
+      //   }
+      //     leds_state[a] = SIDELED_STATE_ON;
+      //     leds_current[a] = CRGB::White;
+      // }
+      // for(int a = 26; a < 30; a++) {
+      //   leds_current[a] = leds_color[a];
+      //   if(leds_state[a] == SIDELED_STATE_OFF) {
+      //     leds_current[a] = CRGB::Black;
+      //   }
+      //   if(leds_state[a] == SIDELED_STATE_FADE) {
+      //     leds_state[a] = SIDELED_STATE_FADE_RG;
+      //     leds_current[a].blue = 0x00;
+      //     leds_current[a].red = 0xFF;
+      //     leds_current[a].green = 0x00;
+      //   }
+      // }
       FastLED.show();
       changed = false;
       block = false;
@@ -110,20 +110,138 @@ void init_sideled() {
     xTaskCreatePinnedToCore(LEDtask, "LEDTask", 4096, NULL, 2, &myTaskHandle, 1);
 }
 
-void set_sideled_state(uint8_t led_livingroom, uint8_t led_bedroom,uint8_t led_attic, uint8_t state) {
+// void set_sideled_state(uint8_t led_livingroom, uint8_t led_bedroom,uint8_t led_attic, uint8_t state) {
+//   block = true;
+//   if(led_livingroom >= SIDELED_NUM_LEDS || led_bedroom > SIDELED_NUM_LEDS || led_attic > SIDELED_NUM_LEDS || led_livingroom >= led_bedroom >= led_attic) return;
+//   for(uint8_t a = led_livingroom; a < led_attic; a++) {
+//     leds_state[a] = state;
+//   }
+//   changed = true;
+// }
+
+// void set_sideled_state(uint8_t led_livingroom, uint8_t led_bedroom, uint8_t led_attic, uint8_t state) {
+//   block = true;
+//   if (led_livingroom >= 15 || led_bedroom < 15 || led_bedroom <= 26 || led_attic > 26 || led_attic <= 30 || led_livingroom >= led_bedroom || led_bedroom >= led_attic)
+//     return;
+//   for (uint8_t a = led_livingroom; a < led_bedroom; a++) {
+//     leds_state[a] = state;
+//   }
+//   for (uint8_t a = led_bedroom; a < led_attic; a++) {
+//     leds_state[a] = state;
+//   }
+
+//   changed = true;
+// }
+
+
+// void set_sideled_color(uint8_t led_livingroom, uint8_t led_bedroom,uint8_t led_attic, CRGB color) {
+//   block = true;
+//   if(led_livingroom >= SIDELED_NUM_LEDS || led_bedroom > SIDELED_NUM_LEDS || led_attic > SIDELED_NUM_LEDS || led_livingroom >= led_bedroom >= led_attic) return;
+//   for(uint8_t a = led_livingroom; a < led_attic; a++) {
+//     leds_color[a] = color;
+//   }
+//   changed = true;
+// }
+
+// void set_sideled_color(uint8_t led_livingroom, uint8_t led_bedroom, uint8_t led_attic, CRGB color) {
+//   block = true;
+//   if (led_livingroom >= 15 || led_bedroom < 15 || led_bedroom > 26 || led_attic < 26 || led_attic > 30 || led_livingroom >= led_bedroom || led_bedroom >= led_attic)
+//     return;
+//   for (uint8_t a = led_livingroom; a < led_bedroom; a++) {
+//     leds_color[a] = color;
+//   }
+//   for (uint8_t a = led_bedroom; a < led_attic; a++) {
+//     leds_color[a] = color;
+//   }
+//   changed = true;
+// }
+
+// void set_sideled_state(uint8_t led_start, uint8_t led_middle, uint8_t led_end, uint8_t state) {
+//     block = true;
+//     if (led_start >= SIDELED_NUM_LEDS || led_end > SIDELED_NUM_LEDS || led_start > led_end) {
+//         return;
+//     }
+//     for (uint8_t a = led_start; a <= led_end; a++) {
+//         leds_state[a] = state;
+//     }
+//     changed = true;
+// }
+
+
+void set_sideled_state(uint8_t led_start, uint8_t led_end, uint8_t state) {
   block = true;
-  if(led_livingroom >= SIDELED_NUM_LEDS || led_bedroom > SIDELED_NUM_LEDS || led_attic > SIDELED_NUM_LEDS || led_livingroom >= led_bedroom >= led_attic) return;
-  for(uint8_t a = led_livingroom; a < led_attic; a++) {
+  if(led_start >= SIDELED_NUM_LEDS || led_end > SIDELED_NUM_LEDS || led_start >= led_end) return;
+  for(uint8_t a = led_start; a < led_end; a++) {
     leds_state[a] = state;
   }
   changed = true;
 }
 
-void set_sideled_color(uint8_t led_livingroom, uint8_t led_bedroom,uint8_t led_attic, CRGB color) {
+void set_sideled_color(uint8_t led_start, uint8_t led_end, CRGB color) {
   block = true;
-  if(led_livingroom >= SIDELED_NUM_LEDS || led_bedroom > SIDELED_NUM_LEDS || led_attic > SIDELED_NUM_LEDS || led_livingroom >= led_bedroom >= led_attic) return;
-  for(uint8_t a = led_livingroom; a < led_attic; a++) {
+  if(led_start >= SIDELED_NUM_LEDS || led_end > SIDELED_NUM_LEDS || led_start >= led_end) return;
+  for(uint8_t a = led_start; a < led_end; a++) {
     leds_color[a] = color;
   }
   changed = true;
+}
+
+// void set_sideled_color(uint8_t led_start, uint8_t led_middle, uint8_t led_end, CRGB color) {
+//     block = true;
+//     if (led_start >= led_middle || led_middle >= led_end || led_end > SIDELED_NUM_LEDS) {
+//         return;
+//     }
+//     for (uint8_t a = led_start; a < led_middle; a++) {
+//         leds_color[a] = color;
+//     }
+//     for (uint8_t a = led_middle; a <= led_end; a++) {
+//         leds_color[a] = color;
+//     }
+//     changed = true;
+// }
+
+
+
+
+// void set_sideled_color(uint8_t led_livingroom, uint8_t led_bedroom, uint8_t led_attic, CRGB color) {
+//     block = true;
+//     if (led_livingroom >= led_bedroom || led_bedroom >= led_attic || led_attic > SIDELED_NUM_LEDS) {
+//         return;
+//     }
+//     for (uint8_t a = led_livingroom; a < led_attic; a++) {
+//         leds_color[a] = color;
+//     }
+//     changed = true;
+// }
+
+// void set_sideled_state(uint8_t led_livingroom, uint8_t led_bedroom, uint8_t led_attic, uint8_t state) {
+//     block = true;
+//     if (led_livingroom >= led_bedroom || led_bedroom >= led_attic || led_attic > SIDELED_NUM_LEDS) {
+//         return;
+//     }
+//     for (uint8_t a = led_livingroom; a < led_attic; a++) {
+//         leds_state[a] = state;
+//     }
+//     changed = true;
+// }
+
+void blink_sideleds(uint8_t led_livingroom, uint8_t led_bedroom, uint8_t led_attic, CRGB color, uint16_t onDuration, uint16_t offDuration) {
+    block = true;
+    if (led_livingroom >= led_bedroom || led_bedroom >= led_attic || led_attic > SIDELED_NUM_LEDS) {
+        return;
+    }
+    uint32_t currentTime = millis();
+    uint32_t blinkInterval = onDuration + offDuration;
+    uint32_t ledIndex = 0;
+
+    if ((currentTime % blinkInterval) < onDuration) {
+        for (uint8_t a = led_livingroom; a < led_attic; a++) {
+            leds_color[a] = color;
+        }
+    } else {
+        for (uint8_t a = led_livingroom; a < led_attic; a++) {
+            leds_color[a] = CRGB::Black;
+        }
+    }
+    changed = true;
 }
