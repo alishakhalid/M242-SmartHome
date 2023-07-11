@@ -86,10 +86,11 @@ void event_handler_button(struct _lv_obj_t * obj, lv_event_t event) {
       led_end = 30;
     }
   
-    CRGB color = lv_checkbox_is_checked(red_checkbox) ? CRGB::Red ? lv_checkbox_is_checked(white_checkbox) : CRGB::White : CRGB::White;
+    CRGB color = lv_checkbox_is_checked(red_checkbox) ? CRGB::Red : CRGB::White;
     uint8_t state = SIDELED_STATE_OFF;
 
-    if (lv_checkbox_is_checked(red_checkbox) || lv_checkbox_is_checked(white_checkbox)) state = SIDELED_STATE_ON;
+    if (lv_checkbox_is_checked(red_checkbox)) state = SIDELED_STATE_ON;
+    if (lv_checkbox_is_checked(white_checkbox)) state = SIDELED_STATE_ON;
     if (lv_checkbox_is_checked(blink_checkbox)) state = SIDELED_STATE_BLINK;
     if (lv_checkbox_is_checked(party_checkbox)) state = SIDELED_STATE_FADE;
     if (lv_checkbox_is_checked(off_checkbox)) state = SIDELED_STATE_OFF;
